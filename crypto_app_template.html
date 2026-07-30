@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoTrack – Material Design 3 Android Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+/* ── MD3 COLOR TOKENS (Light scheme – Baseline Purple/Crypto) ── */
+:root {
+  /* Primary */
+  --md-primary:            #6750A4;
+  --md-on-primary:         #FFFFFF;
+  --md-primary-container:  #EADDFF;
+  --md-on-primary-container:#21005D;
+  /* Secondary */
+  --md-secondary:          #625B71;
+  --md-on-secondary:       #FFFFFF;
+  --md-secondary-container:#E8DEF8;
+  --md-on-secondary-container:#1D192B;
+  /* Tertiary */
+  --md-tertiary:           #7D5260;
+  --md-on-tertiary:        #FFFFFF;
+  --md-tertiary-container: #FFD8E4;
+  --md-on-tertiary-container:#31111D;
+  /* Error */
+  --md-error:              #B3261E;
+  --md-error-container:    #F9DEDC;
+  --md-on-error-container: #410E0B;
+  /* Surface */
+  --md-background:         #FFFBFE;
+  --md-on-background:      #1C1B1F;
+  --md-surface:            #FFFBFE;
+  --md-on-surface:         #1C1B1F;
+  --md-surface-variant:    #E7E0EC;
+  --md-on-surface-variant: #49454F;
+  --md-surface-container-lowest:  #FFFFFF;
+  --md-surface-container-low:     #F7F2FA;
+  --md-surface-container:         #F3EDF7;
+  --md-surface-container-high:    #ECE6F0;
+  --md-surface-container-highest: #E6E0E9;
+  /* Outline */
+  --md-outline:            #79747E;
+  --md-outline-variant:    #CAC4D0;
+  /* Custom semantic (not in MD3 baseline but needed for finance) */
+  --price-up:    #1B873C;
+  --price-up-bg: #E6F4EA;
+  --price-dn:    #C5221F;
+  --price-dn-bg: #FCE8E6;
+  /* MD3 Shape Scale */
+  --shape-xs:   4px;
+  --shape-sm:   8px;
+  --shape-md:   12px;
+  --shape-lg:   16px;
+  --shape-xl:   28px;
+  --shape-full: 50%;
+  /* MD3 Elevation (tonal surface tints) */
+  --elev-1: rgba(103,80,164,.05);
+  --elev-2: rgba(103,80,164,.08);
+  --elev-3: rgba(103,80,164,.11);
+  /* Typography */
+  --font: 'Roboto', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #E8EBF0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 48px;
+  padding: 40px 24px 80px;
+  font-family: var(--font);
+  flex-wrap: wrap;
+  min-height: 100vh;
+}
+
+/* ── Screen wrapper ── */
+.screen-block { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.screen-label { color: #5F6368; font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; font-family: var(--font); }
+.api-badge { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 360px; }
+.api-tag { background: #F0EBF8; border: 1px solid #CAC4D0; color: #6750A4; font-size: 9px; font-weight: 500; padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); }
+
+/* ── Phone frame (Android 360×800) ── */
+.phone {
+  width: 360px; height: 800px;
+  background: var(--md-background);
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid #BCC0C9;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 0 8px #CDD1DA,
+    0 1px 2px rgba(0,0,0,.3),
+    0 8px 32px rgba(0,0,0,.22),
+    0 24px 64px rgba(0,0,0,.14);
+  flex-shrink: 0;
+}
+
+/* ── Android status bar (24dp) ── */
+.status-bar {
+  height: 24px;
+  background: var(--md-surface-container-low);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+  z-index: 20;
+}
+.sb-time { font-size: 12px; font-weight: 500; color: var(--md-on-surface); letter-spacing: .02em; }
+.sb-icons { display: flex; align-items: center; gap: 5px; }
+.sb-icon { font-size: 14px; color: var(--md-on-surface); font-family: 'Material Icons'; }
+/* fallback SVG battery/signal */
+.sb-icons svg { fill: var(--md-on-surface); }
+
+/* ── MD3 Top App Bar – Small (64dp) ── */
+.top-app-bar {
+  height: 64px;
+  background: var(--md-surface-container-low);
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 4px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.top-app-bar.scrolled { box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.tab-icon-btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; }
+.tab-icon-btn:hover { background: rgba(103,80,164,.08); }
+.tab-icon-btn span { font-size: 24px; color: var(--md-on-surface-variant); font-family: 'Material Icons'; }
+.tab-title { flex: 1; color: var(--md-on-surface); font-size: 22px; font-weight: 400; padding-left: 8px; letter-spacing: 0; }
+.tab-title.center { text-align: center; flex: 1; padding: 0; }
+.avatar-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--md-primary); display: flex; align-items: center; justify-content: center; color: var(--md-on-primary); font-size: 14px; font-weight: 500; margin: 0 8px; }
+
+/* ── Large Top App Bar variant ── */
+.top-app-bar-large {
+  background: var(--md-surface-container-low);
+  padding: 0;
+  flex-shrink: 0;
+}
+.tab-large-row1 { height: 64px; display: flex; align-items: center; padding: 0 4px; }
+.tab-large-title { font-size: 28px; font-weight: 400; color: var(--md-on-surface); padding: 4px 16px 12px; letter-spacing: 0; line-height: 1.2; }
+
+/* ── Scrollable content ── */
+.content { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.content::-webkit-scrollbar { display: none; }
+
+/* ── MD3 Navigation Bar (80dp) ── */
+.nav-bar {
+  height: 80px;
+  background: var(--md-surface-container);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 12px;
+  flex-shrink: 0;
+  border-top: none;
+  z-index: 10;
+}
+.nav-dest {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.nav-pill {
+  height: 32px; min-width: 64px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+  gap: 4px;
+  padding: 0 16px;
+}
+.nav-dest.active .nav-pill { background: var(--md-secondary-container); }
+.nav-pill-icon { font-size: 24px; color: var(--md-on-surface-variant); font-family: 'Material Icons'; }
+.nav-dest.active .nav-pill-icon { color: var(--md-on-secondary-container); }
+.nav-dest-label { font-size: 12px; font-weight: 500; color: var(--md-on-surface-variant); letter-spacing: .04em; }
+.nav-dest.active .nav-dest-label { color: var(--md-on-surface); font-weight: 700; }
+
+/* ── Android gesture bar ── */
+.gesture-bar {
+  height: 20px;
+  background: var(--md-surface-container);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.gesture-bar div { width: 134px; height: 5px; background: var(--md-outline-variant); border-radius: 99px; }
+
+/* ── MD3 TYPOGRAPHY SCALE ── */
+.t-display-sm { font-size: 36px; font-weight: 400; line-height: 1.2; letter-spacing: -.02em; color: var(--md-on-surface); }
+.t-headline-lg { font-size: 32px; font-weight: 400; line-height: 1.2; color: var(--md-on-surface); }
+.t-headline-md { font-size: 28px; font-weight: 400; line-height: 1.3; color: var(--md-on-surface); }
+.t-headline-sm { font-size: 24px; font-weight: 400; line-height: 1.3; color: var(--md-on-surface); }
+.t-title-lg    { font-size: 22px; font-weight: 400; line-height: 1.3; color: var(--md-on-surface); }
+.t-title-md    { font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: .01em; color: var(--md-on-surface); }
+.t-title-sm    { font-size: 14px; font-weight: 500; line-height: 1.4; letter-spacing: .01em; color: var(--md-on-surface); }
+.t-body-lg     { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--md-on-surface); }
+.t-body-md     { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--md-on-surface); }
+.t-body-sm     { font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--md-on-surface-variant); }
+.t-label-lg    { font-size: 14px; font-weight: 500; line-height: 1.4; letter-spacing: .01em; color: var(--md-on-surface); }
+.t-label-md    { font-size: 12px; font-weight: 500; line-height: 1.3; letter-spacing: .05em; color: var(--md-on-surface-variant); }
+.t-label-sm    { font-size: 11px; font-weight: 500; line-height: 1.3; letter-spacing: .05em; color: var(--md-on-surface-variant); }
+.on-surface-variant { color: var(--md-on-surface-variant); }
+.on-primary { color: var(--md-on-primary); }
+
+/* ── MD3 CARDS ── */
+/* Elevated card: surface + shadow */
+.card-elevated {
+  background: var(--md-surface-container-low);
+  border-radius: var(--shape-md);
+  box-shadow: 0 1px 2px rgba(0,0,0,.1), 0 2px 6px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+/* Filled card: surface variant, no shadow */
+.card-filled {
+  background: var(--md-surface-container-highest);
+  border-radius: var(--shape-md);
+  overflow: hidden;
+}
+/* Outlined card */
+.card-outlined {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-md);
+  overflow: hidden;
+}
+
+/* ── MD3 DIVIDER ── */
+.divider { height: 1px; background: var(--md-outline-variant); margin: 0; }
+
+/* ── MD3 FILTER CHIPS ── */
+.chip-row { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  height: 32px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 8px;
+  padding: 0 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  white-space: nowrap; flex-shrink: 0;
+  cursor: pointer;
+}
+.chip.selected {
+  background: var(--md-secondary-container);
+  border-color: transparent;
+}
+.chip span.chip-label { font-size: 14px; font-weight: 500; letter-spacing: .01em; color: var(--md-on-surface-variant); }
+.chip.selected span.chip-label { color: var(--md-on-secondary-container); }
+.chip span.chip-icon { font-size: 18px; color: var(--md-on-surface-variant); font-family: 'Material Icons'; }
+.chip.selected span.chip-icon { color: var(--md-on-secondary-container); }
+
+/* ── MD3 BUTTONS ── */
+.btn-filled {
+  height: 40px; border-radius: 20px;
+  background: var(--md-primary); color: var(--md-on-primary);
+  font-size: 14px; font-weight: 500; letter-spacing: .01em;
+  padding: 0 24px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; cursor: pointer;
+}
+.btn-tonal {
+  height: 40px; border-radius: 20px;
+  background: var(--md-secondary-container); color: var(--md-on-secondary-container);
+  font-size: 14px; font-weight: 500; letter-spacing: .01em;
+  padding: 0 24px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; cursor: pointer;
+}
+.btn-outlined {
+  height: 40px; border-radius: 20px;
+  background: transparent; color: var(--md-primary);
+  border: 1px solid var(--md-outline);
+  font-size: 14px; font-weight: 500; letter-spacing: .01em;
+  padding: 0 24px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer;
+}
+
+/* ── MD3 FAB – Extended ── */
+.fab-extended {
+  position: absolute; bottom: 104px; right: 16px;
+  height: 56px; border-radius: 16px;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 0 20px;
+  box-shadow: 0 3px 6px rgba(0,0,0,.16), 0 6px 20px rgba(0,0,0,.12);
+  z-index: 5;
+  font-size: 14px; font-weight: 500; letter-spacing: .01em;
+}
+.fab-extended span.material-icons { font-size: 24px; }
+/* Regular FAB */
+.fab-reg {
+  position: absolute; bottom: 104px; right: 16px;
+  width: 56px; height: 56px; border-radius: 16px;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,.16), 0 6px 20px rgba(0,0,0,.12);
+  z-index: 5;
+  font-size: 24px; font-family: 'Material Icons';
+}
+
+/* ── MD3 BADGE (assist chip style for price) ── */
+.price-badge-up {
+  height: 24px; border-radius: 4px;
+  background: var(--price-up-bg); color: var(--price-up);
+  font-size: 12px; font-weight: 500; letter-spacing: .04em;
+  padding: 0 8px;
+  display: inline-flex; align-items: center;
+}
+.price-badge-dn {
+  height: 24px; border-radius: 4px;
+  background: var(--price-dn-bg); color: var(--price-dn);
+  font-size: 12px; font-weight: 500; letter-spacing: .04em;
+  padding: 0 8px;
+  display: inline-flex; align-items: center;
+}
+
+/* ── MD3 LIST ITEM ── */
+.list-item {
+  display: flex; align-items: center;
+  min-height: 72px;
+  padding: 8px 16px;
+  background: var(--md-surface);
+  gap: 16px;
+  cursor: pointer;
+}
+.list-item:hover { background: rgba(103,80,164,.04); }
+.list-item-leading { flex-shrink: 0; }
+.list-item-content { flex: 1; min-width: 0; }
+.list-item-trailing { text-align: right; flex-shrink: 0; }
+
+/* ── MD3 SEARCH BAR ── */
+.search-bar {
+  margin: 8px 16px 12px;
+  height: 56px;
+  background: var(--md-surface-container-highest);
+  border-radius: 28px;
+  display: flex; align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  box-shadow: none;
+}
+.search-bar span.lead-icon { font-size: 24px; color: var(--md-on-surface-variant); font-family: 'Material Icons'; }
+.search-bar input { flex: 1; background: none; border: none; outline: none; font-size: 16px; color: var(--md-on-surface); font-family: var(--font); }
+.search-bar input::placeholder { color: var(--md-on-surface-variant); }
+.search-bar span.trail-icon { font-size: 24px; color: var(--md-on-surface-variant); font-family: 'Material Icons'; }
+
+/* ── Coin avatar circle ── */
+.coin-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.coin-avatar.lg { width: 48px; height: 48px; font-size: 24px; }
+
+/* ── Sparkline ── */
+.sparkline { width: 72px; height: 36px; }
+
+/* ── Section label ── */
+.section-label {
+  padding: 16px 16px 8px;
+  font-size: 11px; font-weight: 500; color: var(--md-on-surface-variant);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ── Horizontal scroll container ── */
+.hscroll { display: flex; gap: 12px; padding: 0 16px 16px; overflow-x: auto; scrollbar-width: none; }
+.hscroll::-webkit-scrollbar { display: none; }
+
+/* ── Progress/bar ── */
+.linear-bar-track { height: 4px; border-radius: 2px; background: var(--md-surface-variant); overflow: hidden; display: flex; }
+.linear-bar-fill  { height: 100%; border-radius: 2px; }
+
+/* ── Tab bar (segmented) ── */
+.tab-row { display: flex; border-bottom: 1px solid var(--md-outline-variant); background: var(--md-surface); flex-shrink: 0; }
+.tab-item { flex: 1; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: var(--md-on-surface-variant); letter-spacing: .01em; cursor: pointer; position: relative; }
+.tab-item.active { color: var(--md-primary); }
+.tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--md-primary); border-radius: 3px 3px 0 0; }
+
+/* ── Chart area ── */
+.chart-area { background: var(--md-surface); padding: 8px 0 0; }
+
+/* ══════════════════════════════════════════════
+   SCREEN 1 – HOME / MARKET LIST
+══════════════════════════════════════════════ */
+/* stat summary card */
+.market-summary-card {
+  margin: 8px 16px 16px;
+  background: var(--md-primary-container);
+  border-radius: var(--shape-lg);
+  padding: 20px;
+}
+/* trending card item */
+.trending-card {
+  width: 140px;
+  background: var(--md-surface-container-low);
+  border-radius: var(--shape-lg);
+  padding: 16px 12px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1);
+}
+
+/* ══════════════════════════════════════════════
+   SCREEN 2 – COIN DETAIL
+══════════════════════════════════════════════ */
+.stat-tile {
+  background: var(--md-surface-container);
+  border-radius: var(--shape-md);
+  padding: 16px;
+  flex: 1;
+}
+
+/* ══════════════════════════════════════════════
+   GUIDE SECTION
+══════════════════════════════════════════════ */
+.guide-section { width: 100%; max-width: 1360px; margin: 48px auto 0; padding: 0 24px; }
+.guide-title { text-align: center; font-size: 24px; font-weight: 500; color: #202124; margin-bottom: 8px; font-family: var(--font); }
+.guide-sub { text-align: center; color: #5F6368; font-size: 14px; margin-bottom: 32px; font-family: var(--font); }
+.guide-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px; margin-bottom: 32px; }
+.guide-step { background: #fff; border: 1px solid #E0E0E0; border-radius: 12px; padding: 20px; }
+.step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--md-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; margin-bottom: 12px; font-family: var(--font); }
+.step-title { font-size: 14px; font-weight: 500; color: #202124; margin-bottom: 6px; font-family: var(--font); }
+.step-body { font-size: 13px; color: #5F6368; line-height: 1.6; font-family: var(--font); }
+.step-body code { background: var(--md-primary-container); color: var(--md-on-primary-container); padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; }
+.tip-box { background: var(--md-primary-container); border-radius: 12px; padding: 16px 20px; display: flex; gap: 12px; }
+.tip-icon { font-size: 24px; flex-shrink: 0; color: var(--md-on-primary-container); font-family: 'Material Icons'; }
+.tip-text { font-size: 13px; color: var(--md-on-primary-container); line-height: 1.6; font-family: var(--font); }
+.api-legend { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px; margin-top: 24px; }
+.api-card { background: #fff; border: 1px solid #E0E0E0; border-radius: 12px; padding: 16px; }
+.api-card-title { font-size: 13px; font-weight: 500; color: #202124; margin-bottom: 8px; font-family: var(--font); }
+.api-card code { display: block; color: var(--md-primary); font-size: 11px; font-family: var(--font-mono); line-height: 2; }
+.hr { border: none; border-top: 1px solid #E0E0E0; margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 1 – HOME / MARKET LIST
+════════════════════════════════════════════ -->
+<div class="screen-block">
+  <div class="screen-label">Screen 1 — Market List</div>
+  <div class="api-badge">
+    <span class="api-tag">/global</span>
+    <span class="api-tag">/search/trending</span>
+    <span class="api-tag">/coins/markets</span>
+  </div>
+  <div class="phone">
+
+    <!-- Android status bar -->
+    <div class="status-bar">
+      <span class="sb-time">9:41</span>
+      <div class="sb-icons">
+        <!-- signal -->
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="2.5" height="6" rx="1"/><rect x="3.5" y="4" width="2.5" height="8" rx="1"/><rect x="7" y="2" width="2.5" height="10" rx="1"/><rect x="10.5" y="0" width="2.5" height="12" rx="1"/></svg>
+        <!-- wifi -->
+        <svg width="14" height="11" viewBox="0 0 14 11"><path d="M7 8.5c.8 0 1.5.7 1.5 1.5S7.8 11.5 7 11.5 5.5 10.8 5.5 10 6.2 8.5 7 8.5zm0-3.5c1.9 0 3.5.8 4.7 2.1l1.4-1.4C11.5 4 9.4 3 7 3S2.5 4 .9 5.7l1.4 1.4C3.5 5.8 5.1 5 7 5zm0-4C9.8 1 12.4 2.1 14.2 4L15.6 2.6C13.5.9 10.4 0 7 0S.5.9-1.6 2.6L-.2 4C1.6 2.1 4.2 1 7 1z" fill-rule="evenodd"/></svg>
+        <!-- battery -->
+        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="1.5" width="21" height="9" rx="2" stroke="#1C1B1F" stroke-width="1" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="3" width="15" height="6" rx="1.5"/></svg>
+      </div>
+    </div>
+
+    <!-- Top App Bar (Small) -->
+    <div class="top-app-bar">
+      <div class="tab-title" style="padding-left:16px;font-size:22px;">CryptoTrack</div>
+      <div class="tab-icon-btn"><span style="font-family:'Material Icons';font-size:24px;color:var(--md-on-surface-variant);">notifications_none</span></div>
+      <div class="avatar-btn">P</div>
+    </div>
+
+    <div class="content">
+
+      <!-- Market summary card (Primary Container) -->
+      <div class="market-summary-card">
+        <div class="t-label-md" style="color:var(--md-on-primary-container);opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Global Market</div>
+        <div style="display:flex;gap:0;margin:10px 0 12px;">
+          <div style="flex:1;">
+            <div style="font-size:26px;font-weight:400;color:var(--md-on-primary-container);letter-spacing:-.02em;">$2.64T</div>
+            <div class="t-body-sm" style="color:var(--md-on-primary-container);opacity:.7;">Market Cap</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:26px;font-weight:400;color:var(--md-on-primary-container);letter-spacing:-.02em;">$98.4B</div>
+            <div class="t-body-sm" style="color:var(--md-on-primary-container);opacity:.7;">24h Volume</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:26px;font-weight:400;color:var(--price-up);letter-spacing:-.02em;">+1.8%</div>
+            <div class="t-body-sm" style="color:var(--md-on-primary-container);opacity:.7;">24h Change</div>
+          </div>
+        </div>
+        <!-- Dominance bar -->
+        <div class="t-label-sm" style="color:var(--md-on-primary-container);opacity:.7;margin-bottom:6px;">BTC Dominance · 54.2%</div>
+        <div class="linear-bar-track" style="background:rgba(33,0,93,.2);">
+          <div class="linear-bar-fill" style="width:54.2%;background:#F7931A;"></div>
+          <div class="linear-bar-fill" style="width:17.1%;background:rgba(255,255,255,.5);margin-left:2px;"></div>
+          <div class="linear-bar-fill" style="width:28.7%;background:rgba(255,255,255,.2);margin-left:2px;"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:8px;">
+          <span class="t-label-sm" style="color:var(--md-on-primary-container);opacity:.7;">🟠 BTC 54.2%</span>
+          <span class="t-label-sm" style="color:var(--md-on-primary-container);opacity:.7;">⚪ ETH 17.1%</span>
+          <span class="t-label-sm" style="color:var(--md-on-primary-container);opacity:.7;">◻ Other 28.7%</span>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div class="section-label">🔥 Trending</div>
+      <div class="hscroll">
+        <div class="trending-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div class="coin-avatar" style="background:#FFF3E0;">₿</div>
+            <div>
+              <div class="t-title-sm">Bitcoin</div>
+              <div class="t-body-sm">BTC</div>
+            </div>
+          </div>
+          <svg width="116" height="36" viewBox="0 0 116 36" fill="none"><polyline points="0,28 18,22 36,26 58,14 76,18 94,8 116,4" stroke="#1B873C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="t-title-sm" style="margin-top:8px;">$67,420</div>
+          <div class="price-badge-up" style="margin-top:4px;">▲ 3.24%</div>
+        </div>
+        <div class="trending-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div class="coin-avatar" style="background:#E8EAF6;">Ξ</div>
+            <div>
+              <div class="t-title-sm">Ethereum</div>
+              <div class="t-body-sm">ETH</div>
+            </div>
+          </div>
+          <svg width="116" height="36" viewBox="0 0 116 36" fill="none"><polyline points="0,24 18,18 36,22 58,12 76,16 94,10 116,7" stroke="#1B873C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="t-title-sm" style="margin-top:8px;">$3,482</div>
+          <div class="price-badge-up" style="margin-top:4px;">▲ 1.87%</div>
+        </div>
+        <div class="trending-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div class="coin-avatar" style="background:#E8F5E9;">◎</div>
+            <div>
+              <div class="t-title-sm">Solana</div>
+              <div class="t-body-sm">SOL</div>
+            </div>
+          </div>
+          <svg width="116" height="36" viewBox="0 0 116 36" fill="none"><polyline points="0,10 18,14 36,12 58,20 76,18 94,26 116,30" stroke="#C5221F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="t-title-sm" style="margin-top:8px;">$178.50</div>
+          <div class="price-badge-dn" style="margin-top:4px;">▼ 0.65%</div>
+        </div>
+        <div class="trending-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div class="coin-avatar" style="background:#E3F2FD;">🐸</div>
+            <div>
+              <div class="t-title-sm">Pepe</div>
+              <div class="t-body-sm">PEPE</div>
+            </div>
+          </div>
+          <svg width="116" height="36" viewBox="0 0 116 36" fill="none"><polyline points="0,30 18,24 36,20 58,10 76,8 94,4 116,2" stroke="#1B873C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="t-title-sm" style="margin-top:8px;">$0.0000124</div>
+          <div class="price-badge-up" style="margin-top:4px;">▲ 12.4%</div>
+        </div>
+      </div>
+
+      <!-- Market section + filter chips -->
+      <div class="section-label" style="padding-bottom:0;">Market</div>
+      <div class="chip-row" style="padding-top:8px;">
+        <div class="chip selected">
+          <span class="chip-icon">check</span>
+          <span class="chip-label">All Coins</span>
+        </div>
+        <div class="chip"><span class="chip-label">Layer 1</span></div>
+        <div class="chip"><span class="chip-label">DeFi</span></div>
+        <div class="chip"><span class="chip-label">Memecoins</span></div>
+        <div class="chip"><span class="chip-label">AI</span></div>
+      </div>
+
+      <!-- List items (MD3 List) -->
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FFF3E0;">₿</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Bitcoin</div>
+          <div class="t-body-sm">BTC · Rank #1</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,28 12,22 24,26 36,14 48,18 60,8 72,5" stroke="#1B873C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$67,420</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">▲ 3.24%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8EAF6;">Ξ</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Ethereum</div>
+          <div class="t-body-sm">ETH · Rank #2</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,22 12,18 24,20 36,12 48,14 60,9 72,7" stroke="#1B873C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$3,482</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">▲ 1.87%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8F5E9;">◎</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Solana</div>
+          <div class="t-body-sm">SOL · Rank #5</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,10 12,14 24,12 36,20 48,18 60,26 72,30" stroke="#C5221F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$178.50</div>
+          <div class="price-badge-dn" style="float:right;margin-top:4px;">▼ 0.65%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FFF8E1;">🔶</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">BNB</div>
+          <div class="t-body-sm">BNB · Rank #4</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,26 12,20 24,22 36,16 48,14 60,10 72,8" stroke="#1B873C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$598.30</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">▲ 2.11%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E0F7FA;">🔵</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">XRP</div>
+          <div class="t-body-sm">XRP · Rank #6</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,20 12,24 24,18 36,26 48,22 60,18 72,14" stroke="#1B873C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$0.648</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">▲ 0.93%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FCE4EC;">🔺</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Avalanche</div>
+          <div class="t-body-sm">AVAX · Rank #9</div>
+        </div>
+        <svg class="sparkline" viewBox="0 0 72 36" fill="none"><polyline points="0,8 12,14 24,12 36,20 48,26 60,22 72,30" stroke="#C5221F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$38.92</div>
+          <div class="price-badge-dn" style="float:right;margin-top:4px;">▼ 2.34%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+    </div><!-- /content -->
+
+    <!-- MD3 Navigation Bar -->
+    <div class="nav-bar">
+      <div class="nav-dest active">
+        <div class="nav-pill"><span class="nav-pill-icon">show_chart</span></div>
+        <div class="nav-dest-label">Markets</div>
+      </div>
+      <div class="nav-dest">
+        <div class="nav-pill"><span class="nav-pill-icon">search</span></div>
+        <div class="nav-dest-label">Explore</div>
+      </div>
+      <div class="nav-dest">
+        <div class="nav-pill"><span class="nav-pill-icon">account_balance_wallet</span></div>
+        <div class="nav-dest-label">Portfolio</div>
+      </div>
+      <div class="nav-dest">
+        <div class="nav-pill"><span class="nav-pill-icon">star_border</span></div>
+        <div class="nav-dest-label">Watchlist</div>
+      </div>
+    </div>
+    <div class="gesture-bar"><div></div></div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 2 – COIN DETAIL
+════════════════════════════════════════════ -->
+<div class="screen-block">
+  <div class="screen-label">Screen 2 — Coin Detail</div>
+  <div class="api-badge">
+    <span class="api-tag">/coins/{id}</span>
+    <span class="api-tag">/coins/{id}/market_chart</span>
+    <span class="api-tag">/coins/{id}/ohlc</span>
+  </div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="sb-time">9:41</span>
+      <div class="sb-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="2.5" height="6" rx="1"/><rect x="3.5" y="4" width="2.5" height="8" rx="1"/><rect x="7" y="2" width="2.5" height="10" rx="1"/><rect x="10.5" y="0" width="2.5" height="12" rx="1"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="1.5" width="21" height="9" rx="2" stroke="#1C1B1F" stroke-width="1" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="3" width="15" height="6" rx="1.5"/></svg>
+      </div>
+    </div>
+
+    <!-- Top App Bar with back -->
+    <div class="top-app-bar" style="background:var(--md-surface-container-low);">
+      <div class="tab-icon-btn"><span style="font-family:'Material Icons';font-size:24px;color:var(--md-on-surface-variant);">arrow_back</span></div>
+      <div class="t-title-lg" style="flex:1;padding-left:8px;">Bitcoin</div>
+      <div class="tab-icon-btn"><span style="font-family:'Material Icons';font-size:24px;color:var(--md-on-surface-variant);">more_vert</span></div>
+    </div>
+
+    <div class="content">
+
+      <!-- Coin identity -->
+      <div style="padding:16px 16px 12px;display:flex;align-items:center;gap:16px;">
+        <div class="coin-avatar lg" style="background:#FFF3E0;">₿</div>
+        <div style="flex:1;">
+          <div class="t-headline-sm">Bitcoin</div>
+          <div class="t-body-sm">BTC · Cryptocurrency</div>
+        </div>
+        <!-- Assist chip: rank -->
+        <div style="height:32px;background:var(--md-surface-container);border-radius:8px;padding:0 12px;display:flex;align-items:center;">
+          <span class="t-label-lg">#1</span>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div style="padding:0 16px 4px;">
+        <div style="font-size:40px;font-weight:400;color:var(--md-on-surface);letter-spacing:-.02em;font-family:var(--font);">$67,420.18</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+          <div class="price-badge-up" style="height:28px;font-size:13px;border-radius:6px;">▲ +$2,104.32 (3.24%)</div>
+          <div class="t-body-sm">24h</div>
+        </div>
+      </div>
+
+      <!-- Time range tabs -->
+      <div style="height:12px;"></div>
+      <div class="tab-row">
+        <div class="tab-item">1D</div>
+        <div class="tab-item active">7D</div>
+        <div class="tab-item">30D</div>
+        <div class="tab-item">90D</div>
+        <div class="tab-item">1Y</div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-area">
+        <svg viewBox="0 0 360 160" fill="none" style="width:100%;height:160px;display:block;">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1B873C" stop-opacity=".15"/>
+              <stop offset="100%" stop-color="#1B873C" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,125 C20,120 35,105 55,98 C75,92 88,110 110,94 C130,78 145,62 175,56 C205,50 215,68 240,52 C262,38 282,26 310,18 C330,14 345,10 360,6" stroke="#1B873C" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M0,125 C20,120 35,105 55,98 C75,92 88,110 110,94 C130,78 145,62 175,56 C205,50 215,68 240,52 C262,38 282,26 310,18 C330,14 345,10 360,6 L360,160 L0,160Z" fill="url(#g1)"/>
+          <circle cx="360" cy="6" r="5" fill="#1B873C"/>
+          <circle cx="360" cy="6" r="10" fill="#1B873C" fill-opacity=".15"/>
+          <!-- Y-axis labels -->
+          <text x="8" y="18" fill="#79747E" font-size="10" font-family="Roboto,sans-serif">$72k</text>
+          <text x="8" y="60" fill="#79747E" font-size="10" font-family="Roboto,sans-serif">$67k</text>
+          <text x="8" y="102" fill="#79747E" font-size="10" font-family="Roboto,sans-serif">$62k</text>
+          <text x="8" y="148" fill="#79747E" font-size="10" font-family="Roboto,sans-serif">$57k</text>
+          <!-- X-axis labels -->
+          <text x="4" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Mon</text>
+          <text x="50" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Tue</text>
+          <text x="100" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Wed</text>
+          <text x="152" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Thu</text>
+          <text x="204" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Fri</text>
+          <text x="256" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Sat</text>
+          <text x="312" y="158" fill="#79747E" font-size="9" font-family="Roboto,sans-serif">Sun</text>
+        </svg>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Stats grid (2-column) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px;">
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">Market Cap</div>
+          <div class="t-title-md" style="margin-top:6px;">$1.33T</div>
+          <div class="t-body-sm" style="margin-top:2px;">Rank #1</div>
+        </div>
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">24h Volume</div>
+          <div class="t-title-md" style="margin-top:6px;">$38.2B</div>
+          <div class="t-body-sm" style="margin-top:2px;">Vol/MCap 2.87%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">Circulating</div>
+          <div class="t-title-md" style="margin-top:6px;">19.72M BTC</div>
+          <div class="t-body-sm" style="margin-top:2px;">of 21M max</div>
+        </div>
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">All-Time High</div>
+          <div class="t-title-md" style="margin-top:6px;">$73,738</div>
+          <div class="t-body-sm" style="margin-top:2px;color:var(--price-dn);">-8.56% from ATH</div>
+        </div>
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">7D Change</div>
+          <div class="t-title-md" style="margin-top:6px;color:var(--price-up);">+8.42%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;">30D Change</div>
+          <div class="t-title-md" style="margin-top:6px;color:var(--price-up);">+15.6%</div>
+        </div>
+      </div>
+
+      <!-- Links row (Assist chips) -->
+      <div style="padding:0 16px 8px;">
+        <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;padding-bottom:8px;">Links</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="chip"><span class="chip-icon" style="font-size:16px;">language</span><span class="chip-label">Website</span></div>
+          <div class="chip"><span class="chip-icon" style="font-size:16px;">description</span><span class="chip-label">Whitepaper</span></div>
+          <div class="chip"><span class="chip-icon" style="font-size:16px;">code</span><span class="chip-label">GitHub</span></div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div style="padding:8px 16px 16px;">
+        <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">About</div>
+        <div class="t-body-md" style="color:var(--md-on-surface-variant);line-height:1.6;">Bitcoin is the first decentralized digital currency, created in 2009 by Satoshi Nakamoto. Transactions are verified through cryptography and recorded in a public blockchain ledger.</div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="padding:0 16px 16px;display:flex;gap:12px;">
+        <button class="btn-filled" style="flex:1;"><span style="font-family:'Material Icons';font-size:18px;">star_border</span>Watchlist</button>
+        <button class="btn-outlined" style="flex:1;"><span style="font-family:'Material Icons';font-size:18px;">share</span>Share</button>
+      </div>
+
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-dest active"><div class="nav-pill"><span class="nav-pill-icon">show_chart</span></div><div class="nav-dest-label">Markets</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">search</span></div><div class="nav-dest-label">Explore</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">account_balance_wallet</span></div><div class="nav-dest-label">Portfolio</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">star_border</span></div><div class="nav-dest-label">Watchlist</div></div>
+    </div>
+    <div class="gesture-bar"><div></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 3 – SEARCH + TRENDING
+════════════════════════════════════════════ -->
+<div class="screen-block">
+  <div class="screen-label">Screen 3 — Search + Trending</div>
+  <div class="api-badge">
+    <span class="api-tag">/search</span>
+    <span class="api-tag">/search/trending</span>
+    <span class="api-tag">/coins/categories/list</span>
+  </div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="sb-time">9:41</span>
+      <div class="sb-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="2.5" height="6" rx="1"/><rect x="3.5" y="4" width="2.5" height="8" rx="1"/><rect x="7" y="2" width="2.5" height="10" rx="1"/><rect x="10.5" y="0" width="2.5" height="12" rx="1"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="1.5" width="21" height="9" rx="2" stroke="#1C1B1F" stroke-width="1" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="3" width="15" height="6" rx="1.5"/></svg>
+      </div>
+    </div>
+
+    <!-- Top App Bar -->
+    <div class="top-app-bar">
+      <div class="tab-title" style="padding-left:16px;">Explore</div>
+    </div>
+
+    <div class="content">
+
+      <!-- MD3 Search bar (full-width, rounded pill) -->
+      <div class="search-bar" style="border:2px solid var(--md-primary);">
+        <span class="lead-icon">search</span>
+        <input placeholder="Search coins, exchanges…" value="sol" readonly/>
+        <span class="trail-icon">close</span>
+      </div>
+
+      <!-- Search results -->
+      <div class="section-label" style="padding-top:8px;">Results for "sol"</div>
+      <div class="divider"></div>
+      <div class="list-item" style="background:rgba(103,80,164,.04);">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8F5E9;font-size:18px;">◎</div></div>
+        <div class="list-item-content"><div class="t-body-lg">Solana</div><div class="t-body-sm">SOL</div></div>
+        <div class="t-label-sm">#5</div>
+        <span style="font-family:'Material Icons';font-size:20px;color:var(--md-on-surface-variant);margin-left:8px;">chevron_right</span>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:var(--md-surface-container);font-size:13px;font-weight:500;color:var(--md-on-surface-variant);">SL</div></div>
+        <div class="list-item-content"><div class="t-body-lg">Solend</div><div class="t-body-sm">SLND</div></div>
+        <div class="t-label-sm">#312</div>
+        <span style="font-family:'Material Icons';font-size:20px;color:var(--md-on-surface-variant);margin-left:8px;">chevron_right</span>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:var(--md-surface-container);font-size:13px;font-weight:500;color:var(--md-on-surface-variant);">SL</div></div>
+        <div class="list-item-content"><div class="t-body-lg">Solanium</div><div class="t-body-sm">SLIM</div></div>
+        <div class="t-label-sm">#580</div>
+        <span style="font-family:'Material Icons';font-size:20px;color:var(--md-on-surface-variant);margin-left:8px;">chevron_right</span>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Category filter chips -->
+      <div class="section-label">Categories</div>
+      <div class="chip-row" style="padding-top:0;">
+        <div class="chip selected"><span class="chip-icon">check</span><span class="chip-label">All</span></div>
+        <div class="chip"><span class="chip-label">Layer 1</span></div>
+        <div class="chip"><span class="chip-label">DeFi</span></div>
+        <div class="chip"><span class="chip-label">NFT</span></div>
+        <div class="chip"><span class="chip-label">GameFi</span></div>
+        <div class="chip"><span class="chip-label">Memecoins</span></div>
+        <div class="chip"><span class="chip-label">AI &amp; Big Data</span></div>
+      </div>
+
+      <!-- Trending (MD3 list) -->
+      <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:16px;">
+        <span>🔥 Trending Coins</span>
+        <span class="t-label-sm">Last 24h</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">1</div>
+        <div class="coin-avatar" style="background:#FFF3E0;margin:0 12px;">₿</div>
+        <div class="list-item-content"><div class="t-body-lg">Bitcoin</div><div class="t-body-sm">MCap $1.33T</div></div>
+        <div class="price-badge-up">+3.24%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">2</div>
+        <div class="coin-avatar" style="background:#E8EAF6;margin:0 12px;">Ξ</div>
+        <div class="list-item-content"><div class="t-body-lg">Ethereum</div><div class="t-body-sm">MCap $418B</div></div>
+        <div class="price-badge-up">+1.87%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">3</div>
+        <div class="coin-avatar" style="background:#E8F5E9;margin:0 12px;">◎</div>
+        <div class="list-item-content"><div class="t-body-lg">Solana</div><div class="t-body-sm">MCap $83B</div></div>
+        <div class="price-badge-dn">-0.65%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">4</div>
+        <div class="coin-avatar" style="background:#E3F2FD;margin:0 12px;">🐸</div>
+        <div class="list-item-content"><div class="t-body-lg">Pepe</div><div class="t-body-sm">MCap $5.8B</div></div>
+        <div class="price-badge-up">+12.4%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">5</div>
+        <div class="coin-avatar" style="background:#FCE4EC;margin:0 12px;">🔺</div>
+        <div class="list-item-content"><div class="t-body-lg">Avalanche</div><div class="t-body-sm">MCap $16B</div></div>
+        <div class="price-badge-dn">-2.34%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">6</div>
+        <div class="coin-avatar" style="background:#F3E5F5;margin:0 12px;">🟣</div>
+        <div class="list-item-content"><div class="t-body-lg">Polkadot</div><div class="t-body-sm">MCap $11B</div></div>
+        <div class="price-badge-up">+4.10%</div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div style="width:24px;text-align:center;color:var(--md-on-surface-variant);font-size:13px;font-weight:500;">7</div>
+        <div class="coin-avatar" style="background:#E8F5E9;margin:0 12px;">🔗</div>
+        <div class="list-item-content"><div class="t-body-lg">Chainlink</div><div class="t-body-sm">MCap $9.8B</div></div>
+        <div class="price-badge-up">+5.77%</div>
+      </div>
+      <div class="divider"></div>
+
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">show_chart</span></div><div class="nav-dest-label">Markets</div></div>
+      <div class="nav-dest active"><div class="nav-pill" style="background:var(--md-secondary-container);"><span class="nav-pill-icon" style="color:var(--md-on-secondary-container);">search</span></div><div class="nav-dest-label" style="color:var(--md-on-surface);font-weight:700;">Explore</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">account_balance_wallet</span></div><div class="nav-dest-label">Portfolio</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">star_border</span></div><div class="nav-dest-label">Watchlist</div></div>
+    </div>
+    <div class="gesture-bar"><div></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 4 – PORTFOLIO / WATCHLIST
+════════════════════════════════════════════ -->
+<div class="screen-block">
+  <div class="screen-label">Screen 4 — Portfolio + Watchlist</div>
+  <div class="api-badge">
+    <span class="api-tag">/simple/price</span>
+    <span class="api-tag">/coins/markets</span>
+    <span class="api-tag">/coins/{id}/market_chart</span>
+  </div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="sb-time">9:41</span>
+      <div class="sb-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="6" width="2.5" height="6" rx="1"/><rect x="3.5" y="4" width="2.5" height="8" rx="1"/><rect x="7" y="2" width="2.5" height="10" rx="1"/><rect x="10.5" y="0" width="2.5" height="12" rx="1"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0" y="1.5" width="21" height="9" rx="2" stroke="#1C1B1F" stroke-width="1" fill="none"/><rect x="21.5" y="3.5" width="2" height="5" rx="1"/><rect x="1.5" y="3" width="15" height="6" rx="1.5"/></svg>
+      </div>
+    </div>
+
+    <div class="top-app-bar">
+      <div class="tab-title" style="padding-left:16px;">Portfolio</div>
+      <div class="tab-icon-btn"><span style="font-family:'Material Icons';font-size:24px;color:var(--md-on-surface-variant);">more_vert</span></div>
+    </div>
+
+    <!-- Tabs: Holdings / Watchlist / P&L -->
+    <div class="tab-row">
+      <div class="tab-item active">Holdings</div>
+      <div class="tab-item">Watchlist</div>
+      <div class="tab-item">P&amp;L</div>
+    </div>
+
+    <div class="content">
+
+      <!-- Portfolio value card (Primary Container) -->
+      <div style="margin:16px;background:var(--md-primary-container);border-radius:var(--shape-lg);padding:20px;">
+        <div class="t-label-md" style="color:var(--md-on-primary-container);opacity:.7;text-transform:uppercase;letter-spacing:.1em;">Total Portfolio Value</div>
+        <div style="font-size:40px;font-weight:400;color:var(--md-on-primary-container);margin:8px 0;letter-spacing:-.02em;">$24,831.52</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="height:28px;background:rgba(27,135,60,.2);color:var(--price-up);border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:13px;font-weight:500;">▲ +$1,204.32</div>
+          <div style="height:28px;background:rgba(27,135,60,.2);color:var(--price-up);border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:13px;font-weight:500;">+5.09% today</div>
+        </div>
+      </div>
+
+      <!-- Allocation bar -->
+      <div style="padding:0 16px 4px;">
+        <div class="t-label-md" style="text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Allocation</div>
+        <div class="linear-bar-track" style="height:8px;border-radius:4px;">
+          <div class="linear-bar-fill" style="width:54%;background:#F7931A;"></div>
+          <div class="linear-bar-fill" style="width:28%;background:#627EEA;margin-left:2px;"></div>
+          <div class="linear-bar-fill" style="width:12%;background:#1B873C;margin-left:2px;"></div>
+          <div class="linear-bar-fill" style="width:6%;background:var(--md-primary);margin-left:2px;"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:#F7931A;"></div><span class="t-body-sm">BTC 54%</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:#627EEA;"></div><span class="t-body-sm">ETH 28%</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:#1B873C;"></div><span class="t-body-sm">SOL 12%</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--md-primary);"></div><span class="t-body-sm">Other 6%</span></div>
+        </div>
+      </div>
+
+      <!-- Holdings section -->
+      <div class="section-label" style="padding-top:20px;">Holdings</div>
+      <div class="divider"></div>
+
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FFF3E0;">₿</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Bitcoin</div>
+          <div class="t-body-sm">0.2014 BTC</div>
+        </div>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$13,577.21</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">+3.24%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8EAF6;">Ξ</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Ethereum</div>
+          <div class="t-body-sm">2.017 ETH</div>
+        </div>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$7,023.49</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">+1.87%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8F5E9;">◎</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">Solana</div>
+          <div class="t-body-sm">16.8 SOL</div>
+        </div>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$2,998.80</div>
+          <div class="price-badge-dn" style="float:right;margin-top:4px;">-0.65%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FFF8E1;">🔶</div></div>
+        <div class="list-item-content">
+          <div class="t-body-lg">BNB</div>
+          <div class="t-body-sm">1.88 BNB</div>
+        </div>
+        <div class="list-item-trailing">
+          <div class="t-body-lg" style="font-weight:500;">$1,232.02</div>
+          <div class="price-badge-up" style="float:right;margin-top:4px;">+2.11%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Watchlist preview -->
+      <div class="section-label" style="padding-top:16px;">
+        <span style="font-family:'Material Icons';font-size:16px;vertical-align:middle;">star</span>
+        Watchlist
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E3F2FD;">🔵</div></div>
+        <div class="list-item-content"><div class="t-body-lg">XRP</div><div class="t-body-sm">Ripple · #6</div></div>
+        <div class="list-item-trailing"><div class="t-body-lg" style="font-weight:500;">$0.648</div><div class="price-badge-up" style="float:right;margin-top:4px;">+0.93%</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#E8F5E9;">🔗</div></div>
+        <div class="list-item-content"><div class="t-body-lg">Chainlink</div><div class="t-body-sm">LINK · #14</div></div>
+        <div class="list-item-trailing"><div class="t-body-lg" style="font-weight:500;">$18.42</div><div class="price-badge-up" style="float:right;margin-top:4px;">+5.77%</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="list-item">
+        <div class="list-item-leading"><div class="coin-avatar" style="background:#FCE4EC;">🔺</div></div>
+        <div class="list-item-content"><div class="t-body-lg">Avalanche</div><div class="t-body-sm">AVAX · #9</div></div>
+        <div class="list-item-trailing"><div class="t-body-lg" style="font-weight:500;">$38.92</div><div class="price-badge-dn" style="float:right;margin-top:4px;">-2.34%</div></div>
+      </div>
+      <div class="divider"></div>
+
+    </div>
+
+    <!-- MD3 Extended FAB -->
+    <div class="fab-extended">
+      <span class="material-icons" style="font-family:'Material Icons';">add</span>
+      Add Holding
+    </div>
+
+    <div class="nav-bar">
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">show_chart</span></div><div class="nav-dest-label">Markets</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">search</span></div><div class="nav-dest-label">Explore</div></div>
+      <div class="nav-dest active"><div class="nav-pill" style="background:var(--md-secondary-container);"><span class="nav-pill-icon" style="color:var(--md-on-secondary-container);">account_balance_wallet</span></div><div class="nav-dest-label" style="color:var(--md-on-surface);font-weight:700;">Portfolio</div></div>
+      <div class="nav-dest"><div class="nav-pill"><span class="nav-pill-icon">star_border</span></div><div class="nav-dest-label">Watchlist</div></div>
+    </div>
+    <div class="gesture-bar"><div></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PENPOT GUIDE
+════════════════════════════════════════════ -->
+<div class="guide-section">
+  <div class="hr"></div>
+  <div class="guide-title">🎨 How to Import This into Penpot</div>
+  <div class="guide-sub">Step-by-step guide — from this HTML template to a Penpot design file with Material Design 3 components</div>
+
+  <div class="guide-steps">
+    <div class="guide-step">
+      <div class="step-num">1</div>
+      <div class="step-title">Screenshot each phone frame in Chrome</div>
+      <div class="step-body">Open this file in Chrome → press <code>F12</code> → click the device icon (<code>Ctrl+Shift+M</code>) → set to <strong>360 × 800</strong>. Right-click each <code>.phone</code> element in DevTools → <strong>"Capture node screenshot"</strong> → you get a clean 360×800 PNG per screen.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">2</div>
+      <div class="step-title">Create a Penpot file with 4 pages</div>
+      <div class="step-body">Go to <strong>penpot.app</strong> → New Project → New File. Add 4 pages at the bottom: <em>Markets, Coin Detail, Search, Portfolio</em>. One screen per page keeps layers clean.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">3</div>
+      <div class="step-title">Set Android frame (360 × 800)</div>
+      <div class="step-body">Press <code>F</code> (Frame tool) → drag a frame → in the right panel set <strong>W: 360, H: 800</strong>. In Penpot's frame preset dropdown select <strong>Android Small</strong> if available, or enter manually. Set background to <code>#FFFBFE</code> (MD3 background token).</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">4</div>
+      <div class="step-title">Import screenshots as reference underlays</div>
+      <div class="step-body">Drag each PNG into its Penpot page → place inside the 360×800 frame → lock the layer (<code>Ctrl+L</code>) → set opacity to <strong>35–40%</strong>. Trace your MD3 components on top of this ghost layer.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">5</div>
+      <div class="step-title">Build MD3 components</div>
+      <div class="step-body">
+        <strong>Top App Bar:</strong> Rect H:64 fill <code>#F7F2FA</code> radius 0. Text font Roboto 22sp.<br>
+        <strong>Cards:</strong> Rect radius <code>12</code> (MD3 Medium shape), fill <code>#F3EDF7</code>, shadow 0 1 2px.<br>
+        <strong>Nav Bar:</strong> Rect H:80 fill <code>#ECE6F0</code>. Active pill: W:64 H:32 radius <code>16</code> fill <code>#E8DEF8</code>.<br>
+        <strong>Chips:</strong> H:32 radius <code>8</code> border <code>#CAC4D0</code>. Selected: fill <code>#E8DEF8</code>.<br>
+        <strong>FAB Extended:</strong> H:56 radius <code>16</code> fill <code>#EADDFF</code>.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">6</div>
+      <div class="step-title">Add MD3 Color Tokens to Assets</div>
+      <div class="step-body">Press <code>Alt+I</code> → Assets → Colors → add:<br>
+        <code>#6750A4</code> md/primary<br>
+        <code>#EADDFF</code> md/primary-container<br>
+        <code>#E8DEF8</code> md/secondary-container<br>
+        <code>#FFFBFE</code> md/background<br>
+        <code>#F3EDF7</code> md/surface-container<br>
+        <code>#1C1B1F</code> md/on-surface<br>
+        <code>#1B873C</code> price/up<br>
+        <code>#C5221F</code> price/down
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">7</div>
+      <div class="step-title">Import the chart SVG directly</div>
+      <div class="step-body">View source (<code>Ctrl+U</code>) → copy the <code>&lt;svg&gt;</code> chart block → save as <code>chart.svg</code> → drag directly into Penpot. It imports as fully editable paths — no tracing needed.</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">8</div>
+      <div class="step-title">Set up prototype navigation</div>
+      <div class="step-body">Click the <strong>Prototype</strong> tab (top right panel) → click the nav bar icon on each screen → drag the blue arrow connector to the target page frame. Press <strong>▶ Play</strong> to preview the interactive flow. Share via the link icon for stakeholder review.</div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <span class="tip-icon">lightbulb</span>
+    <div class="tip-text">
+      <strong>Material Design 3 spec applied in this template:</strong> Roboto type scale (Display → Label), MD3 shape scale (xs 4dp → xl 28dp), tonal surface color hierarchy (surface → surface-container → surface-container-highest), Navigation Bar with indicator pills (not tab bars), Filled/Tonal/Outlined button hierarchy, Filter chips for categorization, Extended FAB for primary actions, 8dp spacing grid, and MD3 baseline color scheme (Primary #6750A4).<br><br>
+      <strong>Google's official MD3 Penpot kit:</strong> Search "Material 3 Design Kit" on the <a href="https://penpot.app/" style="color:var(--md-on-primary-container);font-weight:500;">Penpot Community</a> — there is an official kit you can duplicate and use with the component styles already built.
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <div style="font-size:15px;font-weight:500;color:#202124;margin-bottom:12px;font-family:var(--font);">CoinGecko Free API — Endpoint Reference</div>
+  <div class="api-legend">
+    <div class="api-card"><div class="api-card-title">📈 Markets Screen</div><code>/global</code><code>/search/trending</code><code>/coins/markets</code><code>/simple/supported_vs_currencies</code></div>
+    <div class="api-card"><div class="api-card-title">🪙 Coin Detail Screen</div><code>/coins/{id}</code><code>/coins/{id}/market_chart</code><code>/coins/{id}/ohlc</code><code>/coins/{id}/tickers</code></div>
+    <div class="api-card"><div class="api-card-title">🔍 Search Screen</div><code>/search?query=</code><code>/search/trending</code><code>/coins/categories/list</code><code>/coins/list</code></div>
+    <div class="api-card"><div class="api-card-title">💼 Portfolio Screen</div><code>/simple/price</code><code>/coins/markets</code><code>/coins/{id}/market_chart</code><code>+ local storage for holdings</code></div>
+  </div>
+  <div style="text-align:center;color:#BDBDBD;font-size:11px;margin-top:20px;padding-bottom:20px;font-family:var(--font);">Rate limit: 30 calls/min · Free tier · No API key required for basic endpoints</div>
+</div>
+
+</body>
+</html>
