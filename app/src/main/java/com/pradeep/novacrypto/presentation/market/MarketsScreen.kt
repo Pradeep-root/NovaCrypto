@@ -30,7 +30,7 @@ fun MarketsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
-        MarketUiState.Loading -> TODO()
+        MarketUiState.Loading -> {}
 
         is MarketUiState.Success -> {
             MarketContent(globalMarket = state.market)
