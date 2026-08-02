@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface CoingeckoApi {
 
-    @GET("/global")
+    @GET("global")
     suspend fun getGlobalData(): GlobalDataDto
 }
