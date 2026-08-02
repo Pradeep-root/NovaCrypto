@@ -86,4 +86,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+
+    // shimmer view library
+    implementation(libs.compose.shimmer)
 }
