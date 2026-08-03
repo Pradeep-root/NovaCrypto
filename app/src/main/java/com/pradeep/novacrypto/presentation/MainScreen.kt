@@ -1,11 +1,15 @@
 package com.pradeep.novacrypto.presentation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,6 +26,7 @@ import com.pradeep.novacrypto.presentation.navigation.bottomNavItems
 import com.pradeep.novacrypto.presentation.portfolio.PortfolioScreen
 import com.pradeep.novacrypto.presentation.watchlist.WatchlistScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
 
@@ -29,8 +34,29 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val novaDestination = navBackStackEntry?.destination
 
+    val title = when (novaDestination?.route) {
+        Screen.Market.route -> "Markets"
+        Screen.Explore.route -> "Explore"
+        Screen.Portfolio.route -> "Portfolio"
+        Screen.Watchlist.route -> "Watchlist"
+        else -> "Nova Crypto"
+    }
+
     Scaffold(
-        topBar = {},
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = title, style = MaterialTheme.typography.titleLarge)
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                scrollBehavior = null
+            )
+        },
         bottomBar = {
             NavigationBar {
                 bottomNavItems.forEach { item ->
